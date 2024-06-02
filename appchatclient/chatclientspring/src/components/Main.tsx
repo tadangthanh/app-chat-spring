@@ -6,7 +6,7 @@ import { over } from 'stompjs';
 import SockJS from "sockjs-client";
 import { getAllMessageBySenderIdAndReceiverId } from "../api/MessageApi";
 import { Message } from "../model/Message";
-import { getIdByToken } from "../func/Token";
+import { getIdByToken, getTokens } from "../func/Token";
 import ChatSection from "./Chat";
 let isConnected = false;
 var stompClient: any = null;
@@ -52,6 +52,12 @@ const MainPage: React.FC = () => {
         scrollToBottom();
     }, [messages]);
     useEffect(() => {
+        getAllMessageBySenderIdAndReceiverId(getIdByToken(), tab)
+            .then(response => setMessages(response))
+        getUserById(tab)
+            .then(response => setReceiver(response))
+    }, [tab]);
+    useEffect(() => {
         getAllUser()
             .then(response => {
                 setMembers(response)
@@ -59,12 +65,7 @@ const MainPage: React.FC = () => {
             })
         connect();
     }, []);
-    useEffect(() => {
-        getAllMessageBySenderIdAndReceiverId(getIdByToken(), tab)
-            .then(response => setMessages(response))
-        getUserById(tab)
-            .then(response => setReceiver(response))
-    }, [tab]);
+
     const connect = () => {
         if (isConnected && stompClient) {
             console.log("Socket is already connected.");
@@ -72,6 +73,7 @@ const MainPage: React.FC = () => {
         }
         let Sock = new SockJS('http://localhost:8080/ws');
         stompClient = over(Sock);
+
         stompClient.connect({}, onConnected, onError);
         isConnected = true;
     }
@@ -86,17 +88,15 @@ const MainPage: React.FC = () => {
         const { value } = event.target;
         setCurrentMessage({ ...currentMessage, "message": value, "senderId": currentUser.id, "receiverId": tab, "senderName": currentUser.username, "receiverName": receiver.username });
     }
-    const updateAndSortMessages = (newMessage: any, prevMessages: any) => {
-        return [...prevMessages, newMessage].sort((a, b) => a.id - b.id);
-    };
+
     const onPrivateMessage = (payload: any) => {
         const message = JSON.parse(payload.body);
-        setMessages(prevMessages => updateAndSortMessages(message, prevMessages));
+        setMessages(prevMessages => [...prevMessages, message]);
         setTab(message.senderId);
     };
     const sendPrivateValue = () => {
         const chatMessage = {
-            id: currentMessage.id + 1,
+            id: currentMessage.id + 2,
             receiverId: receiver.id,
             senderId: currentUser.id,
             message: currentMessage.message,
@@ -105,7 +105,9 @@ const MainPage: React.FC = () => {
         };
 
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-        setMessages(prevMessages => updateAndSortMessages(chatMessage, prevMessages));
+        console.log("messages: ", messages);
+
+        setMessages(prevMessages => [...prevMessages, chatMessage]);
         setCurrentMessage({ ...currentMessage, message: "", senderId: currentUser.id, receiverId: tab, senderName: currentUser.username, receiverName: receiver.username });
     };
     return (
@@ -128,7 +130,7 @@ const MainPage: React.FC = () => {
                     <div className="col-md-6 col-lg-7 col-xl-8">
                         <ul className="list-unstyled">
                             {messages.map(message =>
-                                <ChatSection key={message.id} name={message.senderName === currentUser.username ? "Bạn" : message.senderName} message={message.message} />)
+                                <ChatSection key={message.id} name={message.senderName === currentUser.username ? "Bạn" : message.senderName} message={message.message} isSender={message.senderName === currentUser.username} />)
                             }
                             <div ref={messagesEndRef} />
                             <li className="bg-white mb-3">

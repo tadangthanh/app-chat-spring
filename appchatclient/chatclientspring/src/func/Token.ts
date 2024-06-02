@@ -1,3 +1,4 @@
+
 export function getIdByToken(): number {
     const token = localStorage.getItem('token');
     if (token) {
@@ -17,3 +18,11 @@ export function getUsernameByToken(): string {
     }
     return '';
 }
+export function getTokens(): string {
+    const token = localStorage.getItem('token');
+    if (token) {
+        return token;
+    }
+    return '';
+}
+

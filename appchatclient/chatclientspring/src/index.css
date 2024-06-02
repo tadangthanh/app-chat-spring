@@ -11,3 +11,74 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.chat-section {
+  display: flex;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+.chat-section .card {
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-section .card-header {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: #f8f9fa;
+  /* Màu nền của header */
+}
+
+.chat-section .card-body {
+  padding: 10px;
+}
+
+.chat-section .sender .card {
+  background-color: #dcf8c6;
+  /* Màu nền của tin nhắn gửi đi */
+}
+
+.chat-section .sender .card-header {
+  background-color: #28a745;
+  /* Màu nền của header tin nhắn gửi đi */
+  color: #fff;
+  /* Màu chữ của header tin nhắn gửi đi */
+}
+
+.form-outline {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-outline textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-bottom: 2px solid #ced4da;
+  border-radius: 0;
+  background-color: transparent;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-outline textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-outline label {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  color: #6c757d;
+  font-size: 0.85rem;
+  pointer-events: none;
+  transition: top 0.15s ease-in-out, font-size 0.15s ease-in-out;
+}
+
+.form-outline textarea:focus+.form-label,
+.form-outline textarea:not(:placeholder-shown)+.form-label {
+  top: -0.75rem;
+  font-size: 0.75rem;
+}

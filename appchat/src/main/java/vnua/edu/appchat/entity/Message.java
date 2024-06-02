@@ -9,6 +9,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition = "TEXT")
     private String message;
     @ManyToOne
     @JoinColumn(name = "sender_id")
