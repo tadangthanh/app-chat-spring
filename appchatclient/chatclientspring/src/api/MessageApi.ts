@@ -23,6 +23,7 @@ export async function getAllMessageByReceiverId(id: number): Promise<Message[]> 
 }
 export async function getAllMessageBySenderIdAndReceiverId(senderId: number, receiverId: number): Promise<Message[]> {
     const url = "http://localhost:8080/api/messages/sender/" + senderId + "/receiver/" + receiverId;
+    console.log("url: ", url);
     const messages = await request(url);
     console.log(messages);
     return messages.map((message: Message) => {

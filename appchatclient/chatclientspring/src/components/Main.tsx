@@ -53,7 +53,10 @@ const MainPage: React.FC = () => {
     }, [messages]);
     useEffect(() => {
         getAllMessageBySenderIdAndReceiverId(getIdByToken(), tab)
-            .then(response => setMessages(response))
+            .then(response => {
+                console.log("response: ", response);
+                setMessages(response)
+            })
         getUserById(tab)
             .then(response => setReceiver(response))
     }, [tab]);
@@ -73,8 +76,11 @@ const MainPage: React.FC = () => {
         }
         let Sock = new SockJS('http://localhost:8080/ws');
         stompClient = over(Sock);
-
-        stompClient.connect({}, onConnected, onError);
+        // Tạo một object chứa token trong header
+        const headers = {
+            Authorization: `Bearer ${getTokens()}` // Thay YOUR_TOKEN bằng token thực tế
+        };
+        stompClient.connect(headers, onConnected, onError);
         isConnected = true;
     }
     const onError = (err: string) => {
@@ -103,8 +109,10 @@ const MainPage: React.FC = () => {
             senderName: currentUser.username,
             receiverName: receiver.username
         };
-
-        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+        const headers = {
+            Authorization: `Bearer ${getTokens()}` // Thay YOUR_TOKEN bằng token thực tế
+        };
+        stompClient.send("/app/private-message", headers, JSON.stringify(chatMessage));
         console.log("messages: ", messages);
 
         setMessages(prevMessages => [...prevMessages, chatMessage]);

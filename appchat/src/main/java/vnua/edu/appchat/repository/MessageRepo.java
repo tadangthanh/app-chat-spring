@@ -10,5 +10,5 @@ import java.util.List;
 public interface MessageRepo extends JpaRepository<Message, Long>{
     List<Message> findBySenderId(Long senderId);
     List<Message> findByReceiverId(Long receiverId);
-
+    List<Message> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
 }
